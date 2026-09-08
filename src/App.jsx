@@ -64,7 +64,113 @@ function findColumn(fields, candidates) {
   return null;
 }
 
-export default function QuarterlyTaxEstimator() {
+const ACCESS_PASSWORD = "taxseason2026";
+const ACCESS_KEY = "qte_access_granted";
+
+function PasswordGate({ children }) {
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return window.localStorage.getItem(ACCESS_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [input, setInput] = useState("");
+  const [wrong, setWrong] = useState(false);
+
+  if (unlocked) return children;
+
+  const tryUnlock = (e) => {
+    e.preventDefault();
+    if (input === ACCESS_PASSWORD) {
+      try {
+        window.localStorage.setItem(ACCESS_KEY, "true");
+      } catch {}
+      setUnlocked(true);
+    } else {
+      setWrong(true);
+    }
+  };
+
+  return (
+    <div
+      style={{
+        fontFamily: "'Source Serif 4', Georgia, serif",
+        background: "#EDE8DA",
+        color: "#20302B",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1.5rem",
+      }}
+    >
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500&display=swap');
+        .ui { font-family: 'IBM Plex Sans', sans-serif; }
+      `}</style>
+      <form onSubmit={tryUnlock} style={{ maxWidth: 360, width: "100%", textAlign: "center" }}>
+        <h1 style={{ fontSize: "1.4rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+          Quarterly Set-Aside Ledger
+        </h1>
+        <p className="ui" style={{ fontSize: "0.85rem", color: "#4A5A54", marginBottom: "1.5rem" }}>
+          Enter your access code to continue.
+        </p>
+        <input
+          type="password"
+          autoFocus
+          value={input}
+          onChange={(e) => {
+            setInput(e.target.value);
+            setWrong(false);
+          }}
+          placeholder="Access code"
+          style={{
+            width: "100%",
+            fontFamily: "'IBM Plex Sans', sans-serif",
+            fontSize: "0.95rem",
+            padding: "0.6rem 0.75rem",
+            border: "1px solid #7A6F55",
+            background: "transparent",
+            color: "#20302B",
+            marginBottom: "0.75rem",
+            boxSizing: "border-box",
+          }}
+        />
+        {wrong && (
+          <p className="ui" style={{ color: "#8A3324", fontSize: "0.8rem", marginBottom: "0.75rem" }}>
+            That code isn't right. Check what you received at purchase.
+          </p>
+        )}
+        <button
+          type="submit"
+          className="ui"
+          style={{
+            width: "100%",
+            background: "#20302B",
+            color: "#EDE8DA",
+            border: "none",
+            padding: "0.65rem 1rem",
+            fontSize: "0.9rem",
+            cursor: "pointer",
+          }}
+        >
+          Unlock
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <PasswordGate>
+      <QuarterlyTaxEstimator />
+    </PasswordGate>
+  );
+}
+
+function QuarterlyTaxEstimator() {
   const [rows, setRows] = useState([]);
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");

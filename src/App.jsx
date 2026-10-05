@@ -421,7 +421,7 @@ function QuarterlyTaxEstimator() {
               </div>
             </div>
 
-            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.75rem" }}>Set aside by quarter</h2>
+            <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: "0.75rem", color: "#20302B" }}>Set aside by quarter</h2>
             <div style={{ marginBottom: "1rem" }}>
               {QUARTERS.map((q) => {
                 const qIncome = quarterTotals[q.key] || 0;
